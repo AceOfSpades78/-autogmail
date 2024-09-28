@@ -1,0 +1,2210 @@
+{
+  "name": "GROW",
+  "flow": [
+    {
+      "id": 1,
+      "module": "google-email:TriggerNewEmail",
+      "version": 2,
+      "parameters": {
+        "from": "",
+        "text": "",
+        "folder": "INBOX",
+        "account": "GROW",
+        "subject": "",
+        "criteria": "ALL",
+        "markSeen": true,
+        "maxResults": 30,
+        "searchType": "simple"
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": {
+          "x": -509,
+          "y": 298
+        },
+        "restore": {
+          "parameters": {
+            "folder": {
+              "path": [
+                "INBOX"
+              ]
+            },
+            "account": "GROW",
+            "criteria": {
+              "label": "GROW"
+            },
+            "searchType": {
+              "label": "GROW"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "GROW",
+            "type": "account:google-restricted",
+            "label": "GROW",
+            "required": true
+          },
+          {
+            "name": "GROW",
+            "type": "select",
+            "label": "GROW",
+            "required": true,
+            "validate": {
+              "enum": [
+                "simple",
+                "gmail"
+              ]
+            }
+          },
+          {
+            "name": "GROW",
+            "type": "boolean",
+            "label": "GROW"
+          },
+          {
+            "name": "GROW",
+            "type": "uinteger",
+            "label": "GROW",
+            "required": true
+          },
+          {
+            "name": "GROW",
+            "type": "folder",
+            "label": "GROW",
+            "required": true
+          },
+          {
+            "name": "GROW",
+            "type": "select",
+            "label": "GROW",
+            "required": true,
+            "validate": {
+              "enum": [
+                "ALL",
+                "SEEN",
+                "UNSEEN"
+              ]
+            }
+          },
+          {
+            "name": "GROW",
+            "type": "email",
+            "label": "GROW"
+          },
+          {
+            "name": "GROW",
+            "type": "text",
+            "label": "GROW"
+          },
+          {
+            "name": "GROW",
+            "type": "text",
+            "label": "GROW"
+          }
+        ],
+        "advanced": true
+      },
+      "onerror": [
+        {
+          "id": 49,
+          "module": "builtin:Ignore",
+          "version": 1,
+          "metadata": {
+            "designer": {
+              "x": -502,
+              "y": 568
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "module": "openai-gpt-3:CreateCompletion",
+      "version": 1,
+      "parameters": {
+        "__IMTCONN__": 2335303
+      },
+      "mapper": {
+        "select": "chat",
+        "max_tokens": "2000",
+        "temperature": "0.2",
+        "top_p": "1",
+        "n_completions": "1",
+        "response_format": "json_object",
+        "model": "gpt-4o-mini",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Ton but est de classer mes mails dans dans diff\u00e9rentes cat\u00e9gories et de pr\u00e9parer une r\u00e9ponse pour ceux qui en n\u00e9cessite une. \nPour te donner du contexte, je m'appelle GROW, entrepreneur dans l'intelligence artificielle. J'utilise cette boite mail comme tout venant. Il y a donc \u00e0 la fois du pro et du perso. \nVoici les labels :\n- 'Achats divers' : les mails automatiques pour divers achat que j'ai fais\n- 'Commandes Amazon' : tous les mails d'Amazon\n- 'Mails auto de clients' : tous les mails de clients (comme Skills4all) automatiques. Donc les mails qui ne demandent pas de r\u00e9ponse de ma part.\n- 'Newsletters' : tout ce qui resemble \u00e0 une newsletter.\n- 'Services en ligne (outils, souscription)' : tous les mails venant d'outils en ligne ou de service en ligne avec souscription. C'est souvent des mails automatiques.\n- 'Notifications' : souvent se sont des notifications de r\u00e9seaux sociaux\n- 'Factures envoy\u00e9s' : comme son nom l'indique, c'est les factures que j'ai envoy\u00e9.\n- 'Factures re\u00e7ues' : comme son nom l'indique, c'est les factures que j'ai re\u00e7ues.\n- Autre : tout ce qui ne rentre pas dans cette cat\u00e9gorie. Il n'y a pas de label \u00e0 donner pour les autres mails, ils seront g\u00e9r\u00e9s par d'autres syst\u00e8mes. \u00c7a peut \u00eatre des emails perso, des gens qui me contactent via linkedin / youtube, des gens qui me posent des questions ou de mani\u00e8re g\u00e9n\u00e9rale des entreprises qui me contacte pour me proposer des choses. \n\nIl peut etre adapt\u00e9 que tu pr\u00e9pare une r\u00e9ponse pour les mails Autre. Par contre, je ne veux pas r\u00e9pondre \u00e0 des mails qui ne me sont pas sp\u00e9cifiquement adress\u00e9. Notamment, je ne r\u00e9ponds pas aux mails de newsletters & de services en ligne & les adresses 'noreply' ou tout mail qui date de \nplus d'un mois.\n\nPour tous les mails Autre qui te semblent adapt\u00e9, tu pr\u00e9parera une r\u00e9ponse adapt\u00e9 en employant un ton simple et direct. Tutoie l'interlocuteur sauf s'il me vouvoie. Tu peux saluer avec le pr\u00e9nom de la personne si tu as l'info, sinon salue sans pr\u00e9nom.\n\nTo donneras tes r\u00e9ponses au format JSON : {  \"label\": \"<le label qui corresponds au mail, ou vide si il ne rentre dans aucune cat\u00e9gorie>\",  \"answer\": \"<la r\u00e9ponse que tu auras pr\u00e9par\u00e9 pour ce mail, ou vide si le mail ne demande pas de r\u00e9ponse>\"}"
+          },
+          {
+            "role": "user",
+            "content": "Voici le mail re\u00e7u :\nCurrent Date: {{now}}\nMessage Date : {{1.date}}\nDelivered-to : {{1.headers.deliveredTo}}\nReply-to : {{1.headers.replyTo}}\nSubject : {{1.subject}}\nText content : {{substring(1.text; 0; 5000)}}\nSender Name : {{1.from.name}}\nSender Email : {{1.from.address}}"
+          }
+        ]
+      },
+      "metadata": {
+        "designer": {
+          "x": -162,
+          "y": 305
+        },
+        "restore": {
+          "parameters": {
+            "__IMTCONN__": {
+              "label": "GROW",
+              "data": {
+                "scoped": "true",
+                "connection": "GROW"
+              }
+            }
+          },
+          "expect": {
+            "select": {
+              "label": "GROW"
+            },
+            "logit_bias": {
+              "mode": "chose"
+            },
+            "response_format": {
+              "mode": "chose",
+              "label": "GROW"
+            },
+            "stop": {
+              "mode": "chose"
+            },
+            "additionalParameters": {
+              "mode": "chose"
+            },
+            "model": {
+              "mode": "chose",
+              "label": "GROW"
+            },
+            "messages": {
+              "mode": "chose",
+              "items": [
+                {
+                  "role": {
+                    "mode": "chose",
+                    "label": "GROW"
+                  }
+                },
+                {
+                  "role": {
+                    "mode": "chose",
+                    "label": "GROW"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "GROW",
+            "type": "account:openai-gpt-3",
+            "label": "GROW",
+            "required": true
+          }
+        ],
+        "expect": [
+          {
+            "name": "GROW",
+            "type": "select",
+            "label": "GROW",
+            "required": true,
+            "validate": {
+              "enum": [
+                "chat",
+                "prompt"
+              ]
+            }
+          },
+          {
+            "name": "GROW",
+            "type": "number",
+            "label": "GROW",
+            "required": true
+          },
+          {
+            "name": "GROW",
+            "type": "number",
+            "label": "GROW",
+            "validate": {
+              "max": 2,
+              "min": 0
+            }
+          },
+          {
+            "name": "GROW",
+            "type": "number",
+            "label": "GROW",
+            "validate": {
+              "max": 1,
+              "min": 0
+            }
+          },
+          {
+            "name": "GROW",
+            "type": "number",
+            "label": "GROW"
+          },
+          {
+            "name": "GROW",
+            "type": "number",
+            "label": "GROW",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "GROW",
+            "type": "number",
+            "label": "GROW",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "GROW",
+            "type": "array",
+            "label": "GROW",
+            "spec": {
+              "spec": [
+                {
+                  "name": "GROW",
+                  "type": "text",
+                  "label": "GROW",
+                  "required": true
+                },
+                {
+                  "name": "GROW",
+                  "type": "number",
+                  "label": "GROW",
+                  "required": true,
+                  "validate": {
+                    "max": 100,
+                    "min": -100
+                  }
+                }
+              ],
+              "type": "collection",
+              "label": "GROW",
+              "name": "GROW"
+            }
+          },
+          {
+            "name": "GROW",
+            "type": "select",
+            "label": "GROW",
+            "validate": {
+              "enum": [
+                "text",
+                "json_object"
+              ]
+            }
+          },
+          {
+            "name": "GROW",
+            "type": "integer",
+            "label": "GROW"
+          },
+          {
+            "name": "GROW",
+            "type": "array",
+            "label": "GROW",
+            "validate": {
+              "maxItems": 4
+            },
+            "spec": {
+              "type": "text",
+              "label": "GROW",
+              "name": "GROW"
+            }
+          },
+          {
+            "name": "GROW",
+            "type": "array",
+            "label": "GROW",
+            "spec": {
+              "spec": [
+                {
+                  "name": "GROW",
+                  "type": "text",
+                  "label": "GROW",
+                  "required": true
+                },
+                {
+                  "name": "GROW",
+                  "type": "select",
+                  "label": "GROW",
+                  "options": [
+                    {
+                      "label": "GROW",
+                      "value": "text",
+                      "nested": [
+                        {
+                          "name": "GROW",
+                          "type": "text",
+                          "label": "GROW"
+                        }
+                      ],
+                      "default": true
+                    },
+                    {
+                      "label": "GROW",
+                      "value": "number",
+                      "nested": [
+                        {
+                          "name": "GROW",
+                          "type": "number",
+                          "label": "GROW"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "GROW",
+                      "value": "boolean",
+                      "nested": [
+                        {
+                          "name": "GROW",
+                          "type": "boolean",
+                          "label": "GROW"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "GROW",
+                      "value": "date",
+                      "nested": [
+                        {
+                          "name": "GROW",
+                          "type": "date",
+                          "label": "GROW"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "GROW",
+                      "value": "any",
+                      "nested": [
+                        {
+                          "name": "GROW",
+                          "type": "any",
+                          "label": "GROW"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "type": "collection",
+              "label": "GROW",
+              "name": "GROW"
+            }
+          },
+          {
+            "name": "GROW",
+            "type": "select",
+            "label": "GROW",
+            "required": true
+          },
+          {
+            "name": "GROW",
+            "type": "array",
+            "label": "GROW",
+            "required": true,
+            "spec": {
+              "spec": [
+                {
+                  "name": "GROW",
+                  "type": "select",
+                  "label": "GROW",
+                  "options": [
+                    {
+                      "label": "GROW",
+                      "value": "system"
+                    },
+                    {
+                      "label": "GROW",
+                      "value": "user"
+                    },
+                    {
+                      "label": "GROW",
+                      "value": "assistant"
+                    }
+                  ],
+                  "required": true
+                },
+                {
+                  "name": "GROW",
+                  "type": "text",
+                  "label": "GROW"
+                }
+              ],
+              "type": "collection",
+              "label": "GROW",
+              "name": "GROW"
+            }
+          }
+        ],
+        "advanced": true
+      },
+      "onerror": [
+        {
+          "id": 18,
+          "module": "builtin:Break",
+          "version": 1,
+          "parameters": {},
+          "mapper": {
+            "count": "3",
+            "retry": true,
+            "interval": "15"
+          },
+          "metadata": {
+            "designer": {
+              "x": -160,
+              "y": 571
+            },
+            "restore": {
+              "expect": {
+                "retry": {
+                  "mode": "chose"
+                }
+              }
+            },
+            "expect": [
+              {
+                "name": "GROW",
+                "type": "boolean",
+                "label": "GROW",
+                "required": true
+              },
+              {
+                "name": "GROW",
+                "type": "uinteger",
+                "label": "GROW",
+                "required": true,
+                "validate": {
+                  "max": 10000,
+                  "min": 1
+                }
+              },
+              {
+                "name": "GROW",
+                "type": "uinteger",
+                "label": "GROW",
+                "required": true,
+                "validate": {
+                  "max": 44640,
+                  "min": 1
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "module": "json:ParseJSON",
+      "version": 1,
+      "parameters": {
+        "type": 83710
+      },
+      "mapper": {
+        "json": "{{3.choices[].message.content}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 235,
+          "y": 299
+        },
+        "restore": {
+          "parameters": {
+            "type": {
+              "label": "GROW"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "GROW",
+            "type": "udt",
+            "label": "GROW"
+          }
+        ],
+        "expect": [
+          {
+            "name": "GROW",
+            "type": "text",
+            "label": "GROW",
+            "required": true
+          }
+        ],
+        "interface": [
+          {
+            "name": "GROW",
+            "type": "text",
+            "label": "GROW",
+            "default": null,
+            "required": true,
+            "multiline": false
+          },
+          {
+            "name": "GROW",
+            "type": "text",
+            "label": "GROW",
+            "default": null,
+            "required": true,
+            "multiline": true
+          }
+        ]
+      },
+      "onerror": [
+        {
+          "id": 25,
+          "module": "builtin:Rollback",
+          "version": 1,
+          "metadata": {
+            "designer": {
+              "x": 242,
+              "y": 588
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "module": "util:Switcher",
+      "version": 1,
+      "parameters": {},
+      "mapper": {
+        "input": "{{1.subject}}{{1.text}}{{1.html}}{{1.from.address}}",
+        "useRegExpMatch": false,
+        "casesTable": [
+          {
+            "pattern": "pirolla40@gmail.com",
+            "output": ""
+          },
+          {
+            "pattern": "G\u00e9rer les pr\u00e9f\u00e9rences",
+            "output": ""
+          },
+          {
+            "pattern": "unsubscribe",
+            "output": ""
+          },
+          {
+            "pattern": "Unsubscribe",
+            "output": ""
+          },
+          {
+            "pattern": "d\u00e9sinscrire",
+            "output": ""
+          },
+          {
+            "pattern": "d\u00e9sabonner",
+            "output": ""
+          },
+          {
+            "pattern": "D\u00e9sabonner",
+            "output": ""
+          },
+          {
+            "pattern": "D\u00e9sinscrire",
+            "output": ""
+          },
+          {
+            "pattern": "Ne plus recevoir d'e-mail",
+            "output": ""
+          },
+          {
+            "pattern": "Invitation: ",
+            "output": ""
+          },
+          {
+            "pattern": "New comment",
+            "output": ""
+          },
+          {
+            "pattern": "is ready to download",
+            "output": ""
+          },
+          {
+            "pattern": "Derniers jours pour",
+            "output": ""
+          },
+          {
+            "pattern": "podia.com",
+            "output": ""
+          },
+          {
+            "pattern": "contact@",
+            "output": ""
+          },
+          {
+            "pattern": "aliexpress",
+            "output": ""
+          },
+          {
+            "pattern": "notifications@",
+            "output": ""
+          },
+          {
+            "pattern": "Ne plus recevoir de message",
+            "output": ""
+          }
+        ],
+        "elseOutput": "{{10.answer}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 584,
+          "y": 294
+        },
+        "restore": {
+          "expect": {
+            "casesTable": {
+              "mode": "chose",
+              "items": [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ]
+            }
+          }
+        },
+        "expect": [
+          {
+            "name": "GROW",
+            "type": "text",
+            "label": "GROW"
+          },
+          {
+            "name": "GROW",
+            "type": "boolean",
+            "label": "GROW",
+            "required": true
+          },
+          {
+            "name": "GROW",
+            "type": "array",
+            "label": "GROW",
+            "required": true,
+            "spec": [
+              {
+                "name": "GROW",
+                "label": "GROW",
+                "type": "text"
+              },
+              {
+                "name": "GROW",
+                "label": "GROW",
+                "type": "any"
+              }
+            ]
+          },
+          {
+            "name": "GROW",
+            "type": "any",
+            "label": "GROW"
+          }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "parameters": {
+        "else": 8
+      },
+      "mapper": null,
+      "metadata": {
+        "designer": {
+          "x": 924,
+          "y": 301
+        }
+      },
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 8,
+              "module": "google-email:ActionModifyLabelsApi",
+              "version": 2,
+              "parameters": {
+                "account": "GROW"
+              },
+              "filter": {
+                "name": "GROW",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{10.label}}",
+                      "b": "Services en ligne (outils, souscription)",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "messageId": "{{1.messageId}}",
+                "addLabelIds": [
+                  "Label_4999859270445991360"
+                ],
+                "removeLabelIds": "INBOX"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1591,
+                  "y": -227
+                },
+                "restore": {
+                  "expect": {
+                    "addLabelIds": {
+                      "mode": "chose",
+                      "label": "GROW"
+                    },
+                    "removeLabelIds": {
+                      "mode": "edit"
+                    }
+                  },
+                  "parameters": {
+                    "account": "GROW"
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "GROW",
+                    "type": "account:google-restricted",
+                    "label": "GROW",
+                    "required": true
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "GROW",
+                    "type": "text",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  }
+                ]
+              },
+              "onerror": [
+                {
+                  "id": 21,
+                  "module": "builtin:Break",
+                  "version": 1,
+                  "parameters": {},
+                  "mapper": {
+                    "count": "3",
+                    "retry": true,
+                    "interval": "15"
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 1946,
+                      "y": -233
+                    },
+                    "restore": {
+                      "expect": {
+                        "retry": {
+                          "mode": "chose"
+                        }
+                      }
+                    },
+                    "expect": [
+                      {
+                        "name": "GROW",
+                        "type": "boolean",
+                        "label": "GROW",
+                        "required": true
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 10000,
+                          "min": 1
+                        }
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 44640,
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 43,
+              "module": "util:TextAggregator",
+              "version": 1,
+              "parameters": {
+                "feeder": 5,
+                "rowSeparator": ""
+              },
+              "filter": {
+                "name": "GROW",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{10.label}}",
+                      "o": "text:equal",
+                      "b": ""
+                    },
+                    {
+                      "a": "{{50.output}}",
+                      "o": "text:notequal",
+                      "b": ""
+                    }
+                  ],
+                  [
+                    {
+                      "a": "{{10.label}}",
+                      "o": "text:equal:ci",
+                      "b": "Autre"
+                    },
+                    {
+                      "a": "{{50.output}}",
+                      "o": "text:notequal",
+                      "b": ""
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "value": "From: {{1.to[].address}}\nTo: {{1.from.address}}\nCc: {{1.cc}}\nBcc: {{1.bcc}}\nSubject: Re: {{1.subject}}\nContent-Type: text/plain; charset=utf-8\n\n{{10.answer}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1629,
+                  "y": 49
+                },
+                "restore": {
+                  "extra": {
+                    "feeder": {
+                      "label": "GROW"
+                    }
+                  },
+                  "parameters": {
+                    "rowSeparator": {
+                      "label": "GROW"
+                    }
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "validate": {
+                      "enum": [
+                        "\n",
+                        "\t",
+                        "other"
+                      ]
+                    }
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "GROW",
+                    "type": "text",
+                    "label": "GROW"
+                  }
+                ]
+              }
+            },
+            {
+              "id": 44,
+              "module": "util:TextAggregator",
+              "version": 1,
+              "parameters": {
+                "feeder": 43,
+                "rowSeparator": ""
+              },
+              "mapper": {
+                "value": "{{base64(43.text)}}"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2034,
+                  "y": 8
+                },
+                "restore": {
+                  "extra": {
+                    "feeder": {
+                      "label": "GROW"
+                    }
+                  },
+                  "parameters": {
+                    "rowSeparator": {
+                      "label": "GROW"
+                    }
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "validate": {
+                      "enum": [
+                        "\n",
+                        "\t",
+                        "other"
+                      ]
+                    }
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "GROW",
+                    "type": "text",
+                    "label": "GROW"
+                  }
+                ]
+              }
+            },
+            {
+              "id": 42,
+              "module": "http:ActionSendDataOAuth",
+              "version": 3,
+              "parameters": {
+                "account": "GROW",
+                "handleErrors": false
+              },
+              "mapper": {
+                "ca": "",
+                "qs": [],
+                "url": "https://www.googleapis.com/gmail/v1/users/me/drafts",
+                "data": "{\n  \"message\": {\n    \"threadId\": \"{{1.threadId}}\",\n    \"raw\": \"{{44.text}}\"\n  }\n}",
+                "gzip": true,
+                "method": "post",
+                "headers": [],
+                "timeout": "",
+                "useMtls": false,
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "serializeUrl": false,
+                "shareCookies": false,
+                "parseResponse": false,
+                "followRedirect": true,
+                "useQuerystring": false,
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
+              },
+              "metadata": {
+                "designer": {
+                  "x": 2495,
+                  "y": 5
+                },
+                "restore": {
+                  "expect": {
+                    "qs": {
+                      "mode": "chose"
+                    },
+                    "method": {
+                      "mode": "chose",
+                      "label": "GROW"
+                    },
+                    "headers": {
+                      "mode": "chose"
+                    },
+                    "bodyType": {
+                      "label": "GROW"
+                    },
+                    "contentType": {
+                      "label": "GROW"
+                    }
+                  },
+                  "parameters": {
+                    "account": "GROW"
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "GROW",
+                    "type": "account:oauth2",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "boolean",
+                    "label": "GROW",
+                    "required": true
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "GROW",
+                    "type": "url",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "boolean",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "get",
+                        "head",
+                        "post",
+                        "put",
+                        "patch",
+                        "delete",
+                        "options"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "GROW",
+                    "spec": [
+                      {
+                        "name": "GROW",
+                        "type": "text",
+                        "label": "GROW",
+                        "required": true
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "text",
+                        "label": "GROW"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "GROW"
+                  },
+                  {
+                    "name": "GROW",
+                    "spec": [
+                      {
+                        "name": "GROW",
+                        "type": "text",
+                        "label": "GROW",
+                        "required": true
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "text",
+                        "label": "GROW"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "GROW"
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "validate": {
+                      "enum": [
+                        "raw",
+                        "x_www_form_urlencoded",
+                        "multipart_form_data"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "boolean",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "uinteger",
+                    "label": "GROW",
+                    "validate": {
+                      "max": 300,
+                      "min": 1
+                    }
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "boolean",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "cert",
+                    "label": "GROW"
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "boolean",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "boolean",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "boolean",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "boolean",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "boolean",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "validate": {
+                      "enum": [
+                        "text/plain",
+                        "application/json",
+                        "application/xml",
+                        "text/xml",
+                        "text/html",
+                        "custom"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "buffer",
+                    "label": "GROW"
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "boolean",
+                    "label": "GROW",
+                    "required": true
+                  }
+                ]
+              },
+              "onerror": [
+                {
+                  "id": 46,
+                  "module": "builtin:Rollback",
+                  "version": 1,
+                  "metadata": {
+                    "designer": {
+                      "x": 2795,
+                      "y": 5
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 26,
+              "module": "google-email:ActionModifyLabelsApi",
+              "version": 2,
+              "parameters": {
+                "account": "GROW"
+              },
+              "filter": {
+                "name": "GROW",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{10.label}}",
+                      "b": "Achats divers",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "messageId": "{{1.messageId}}",
+                "addLabelIds": [
+                  "Label_1722952121962501074"
+                ],
+                "removeLabelIds": "INBOX"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1602,
+                  "y": 273
+                },
+                "restore": {
+                  "expect": {
+                    "addLabelIds": {
+                      "mode": "chose",
+                      "label": "GROW"
+                    },
+                    "removeLabelIds": {
+                      "mode": "edit"
+                    }
+                  },
+                  "parameters": {
+                    "account": "GROW"
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "GROW",
+                    "type": "account:google-restricted",
+                    "label": "GROW",
+                    "required": true
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "GROW",
+                    "type": "text",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  }
+                ]
+              },
+              "onerror": [
+                {
+                  "id": 27,
+                  "module": "builtin:Break",
+                  "version": 1,
+                  "parameters": {},
+                  "mapper": {
+                    "count": "3",
+                    "retry": true,
+                    "interval": "15"
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 1952,
+                      "y": 267
+                    },
+                    "restore": {
+                      "expect": {
+                        "retry": {
+                          "mode": "chose"
+                        }
+                      }
+                    },
+                    "expect": [
+                      {
+                        "name": "GROW",
+                        "type": "boolean",
+                        "label": "GROW",
+                        "required": true
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 10000,
+                          "min": 1
+                        }
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 44640,
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 29,
+              "module": "google-email:ActionModifyLabelsApi",
+              "version": 2,
+              "parameters": {
+                "account": "GROW"
+              },
+              "filter": {
+                "name": "GROW",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{10.label}}",
+                      "b": "Factures envoy\u00e9es",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "messageId": "{{1.messageId}}",
+                "addLabelIds": [
+                  "Label_2597787967359256992"
+                ],
+                "removeLabelIds": "INBOX"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1608,
+                  "y": 532
+                },
+                "restore": {
+                  "expect": {
+                    "addLabelIds": {
+                      "mode": "chose",
+                      "label": "GROW"
+                    },
+                    "removeLabelIds": {
+                      "mode": "edit"
+                    }
+                  },
+                  "parameters": {
+                    "account": "GROW"
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "GROW",
+                    "type": "account:google-restricted",
+                    "label": "GROW",
+                    "required": true
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "GROW",
+                    "type": "text",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  }
+                ]
+              },
+              "onerror": [
+                {
+                  "id": 34,
+                  "module": "builtin:Break",
+                  "version": 1,
+                  "parameters": {},
+                  "mapper": {
+                    "count": "3",
+                    "retry": true,
+                    "interval": "15"
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 1948,
+                      "y": 533
+                    },
+                    "restore": {
+                      "expect": {
+                        "retry": {
+                          "mode": "chose"
+                        }
+                      }
+                    },
+                    "expect": [
+                      {
+                        "name": "GROW",
+                        "type": "boolean",
+                        "label": "GROW",
+                        "required": true
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 10000,
+                          "min": 1
+                        }
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 44640,
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 30,
+              "module": "google-email:ActionModifyLabelsApi",
+              "version": 2,
+              "parameters": {
+                "account": "GROW"
+              },
+              "filter": {
+                "name": "GROW",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{10.label}}",
+                      "b": "Factures re\u00e7ues",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "messageId": "{{1.messageId}}",
+                "addLabelIds": [
+                  "Label_7761718182671286554"
+                ],
+                "removeLabelIds": "INBOX"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1614,
+                  "y": 804
+                },
+                "restore": {
+                  "expect": {
+                    "addLabelIds": {
+                      "mode": "chose",
+                      "label": "GROW"
+                    },
+                    "removeLabelIds": {
+                      "mode": "edit"
+                    }
+                  },
+                  "parameters": {
+                    "account": "GROW"
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "GROW",
+                    "type": "account:google-restricted",
+                    "label": "GROW",
+                    "required": true
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "GROW",
+                    "type": "text",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  }
+                ]
+              },
+              "onerror": [
+                {
+                  "id": 35,
+                  "module": "builtin:Break",
+                  "version": 1,
+                  "parameters": {},
+                  "mapper": {
+                    "count": "3",
+                    "retry": true,
+                    "interval": "15"
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 1939,
+                      "y": 878
+                    },
+                    "restore": {
+                      "expect": {
+                        "retry": {
+                          "mode": "chose"
+                        }
+                      }
+                    },
+                    "expect": [
+                      {
+                        "name": "GROW",
+                        "type": "boolean",
+                        "label": "GROW",
+                        "required": true
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 10000,
+                          "min": 1
+                        }
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 44640,
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 31,
+              "module": "google-email:ActionModifyLabelsApi",
+              "version": 2,
+              "parameters": {
+                "account": "GROW"
+              },
+              "filter": {
+                "name": "GROW",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{10.label}}",
+                      "b": "Mails auto de clients",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "messageId": "{{1.messageId}}",
+                "addLabelIds": [
+                  "Label_3367506145821444903"
+                ],
+                "removeLabelIds": "INBOX"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1614,
+                  "y": 1070
+                },
+                "restore": {
+                  "expect": {
+                    "addLabelIds": {
+                      "mode": "chose",
+                      "label": "GROW"
+                    },
+                    "removeLabelIds": {
+                      "mode": "edit"
+                    }
+                  },
+                  "parameters": {
+                    "account": "GROW"
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "GROW",
+                    "type": "account:google-restricted",
+                    "label": "GROW",
+                    "required": true
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "GROW",
+                    "type": "text",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  }
+                ]
+              },
+              "onerror": [
+                {
+                  "id": 36,
+                  "module": "builtin:Break",
+                  "version": 1,
+                  "parameters": {},
+                  "mapper": {
+                    "count": "3",
+                    "retry": true,
+                    "interval": "15"
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 1891,
+                      "y": 1255
+                    },
+                    "restore": {
+                      "expect": {
+                        "retry": {
+                          "mode": "chose"
+                        }
+                      }
+                    },
+                    "expect": [
+                      {
+                        "name": "GROW",
+                        "type": "boolean",
+                        "label": "GROW",
+                        "required": true
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 10000,
+                          "min": 1
+                        }
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 44640,
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 32,
+              "module": "google-email:ActionModifyLabelsApi",
+              "version": 2,
+              "parameters": {
+                "account": "GROW"
+              },
+              "filter": {
+                "name": "GROW",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{10.label}}",
+                      "b": "Newsletters",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "messageId": "{{1.messageId}}",
+                "addLabelIds": [
+                  "Label_1835201704966589875"
+                ],
+                "removeLabelIds": "INBOX"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1316,
+                  "y": 1136
+                },
+                "restore": {
+                  "expect": {
+                    "addLabelIds": {
+                      "mode": "chose",
+                      "label": "GROW"
+                    },
+                    "removeLabelIds": {
+                      "mode": "edit"
+                    }
+                  },
+                  "parameters": {
+                    "account": "GROW"
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "GROW",
+                    "type": "account:google-restricted",
+                    "label": "GROW",
+                    "required": true
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "GROW",
+                    "type": "text",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  }
+                ]
+              },
+              "onerror": [
+                {
+                  "id": 37,
+                  "module": "builtin:Break",
+                  "version": 1,
+                  "parameters": {},
+                  "mapper": {
+                    "count": "3",
+                    "retry": true,
+                    "interval": "15"
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 1446,
+                      "y": 1398
+                    },
+                    "restore": {
+                      "expect": {
+                        "retry": {
+                          "mode": "chose"
+                        }
+                      }
+                    },
+                    "expect": [
+                      {
+                        "name": "GROW",
+                        "type": "boolean",
+                        "label": "GROW",
+                        "required": true
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 10000,
+                          "min": 1
+                        }
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 44640,
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 33,
+              "module": "google-email:ActionModifyLabelsApi",
+              "version": 2,
+              "parameters": {
+                "account": "GROW"
+              },
+              "filter": {
+                "name": "GROW",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{10.label}}",
+                      "b": "Notifications",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "messageId": "{{1.messageId}}",
+                "addLabelIds": [
+                  "Label_7651172748799460205"
+                ],
+                "removeLabelIds": "INBOX"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 1047,
+                  "y": 1143
+                },
+                "restore": {
+                  "expect": {
+                    "addLabelIds": {
+                      "mode": "chose",
+                      "label": "GROW"
+                    },
+                    "removeLabelIds": {
+                      "mode": "edit"
+                    }
+                  },
+                  "parameters": {
+                    "account": "GROW"
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "GROW",
+                    "type": "account:google-restricted",
+                    "label": "GROW",
+                    "required": true
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "GROW",
+                    "type": "text",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  }
+                ]
+              },
+              "onerror": [
+                {
+                  "id": 38,
+                  "module": "builtin:Break",
+                  "version": 1,
+                  "parameters": {},
+                  "mapper": {
+                    "count": "3",
+                    "retry": true,
+                    "interval": "15"
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 1056,
+                      "y": 1453
+                    },
+                    "restore": {
+                      "expect": {
+                        "retry": {
+                          "mode": "chose"
+                        }
+                      }
+                    },
+                    "expect": [
+                      {
+                        "name": "GROW",
+                        "type": "boolean",
+                        "label": "GROW",
+                        "required": true
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 10000,
+                          "min": 1
+                        }
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 44640,
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 39,
+              "module": "google-email:ActionModifyLabelsApi",
+              "version": 2,
+              "parameters": {
+                "account": "GROW"
+              },
+              "filter": {
+                "name": "GROW",
+                "conditions": []
+              },
+              "mapper": {
+                "messageId": "{{1.messageId}}",
+                "addLabelIds": [
+                  "Label_2540634960130367238"
+                ],
+                "removeLabelIds": "INBOX"
+              },
+              "metadata": {
+                "designer": {
+                  "x": 768,
+                  "y": 1145
+                },
+                "restore": {
+                  "expect": {
+                    "addLabelIds": {
+                      "mode": "chose",
+                      "label": "GROW"
+                    },
+                    "removeLabelIds": {
+                      "mode": "edit"
+                    }
+                  },
+                  "parameters": {
+                    "account": "GROW"
+                  }
+                },
+                "parameters": [
+                  {
+                    "name": "GROW",
+                    "type": "account:google-restricted",
+                    "label": "GROW",
+                    "required": true
+                  }
+                ],
+                "expect": [
+                  {
+                    "name": "GROW",
+                    "type": "text",
+                    "label": "GROW",
+                    "required": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  },
+                  {
+                    "name": "GROW",
+                    "type": "select",
+                    "label": "GROW",
+                    "multiple": true
+                  }
+                ]
+              },
+              "onerror": [
+                {
+                  "id": 40,
+                  "module": "builtin:Break",
+                  "version": 1,
+                  "parameters": {},
+                  "mapper": {
+                    "count": "3",
+                    "retry": true,
+                    "interval": "15"
+                  },
+                  "metadata": {
+                    "designer": {
+                      "x": 747,
+                      "y": 1485
+                    },
+                    "restore": {
+                      "expect": {
+                        "retry": {
+                          "mode": "chose"
+                        }
+                      }
+                    },
+                    "expect": [
+                      {
+                        "name": "GROW",
+                        "type": "boolean",
+                        "label": "GROW",
+                        "required": true
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 10000,
+                          "min": 1
+                        }
+                      },
+                      {
+                        "name": "GROW",
+                        "type": "uinteger",
+                        "label": "GROW",
+                        "required": true,
+                        "validate": {
+                          "max": 44640,
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "instant": false,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "slots": null,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": true,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    },
+    "zone": "eu2.make.com"
+  }
+}
